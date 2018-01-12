@@ -1,0 +1,9 @@
+Verified+1: Jenkins <attcomdev.jenkins@gmail.com>
+Code-Review+2: Pete Birley <pete@port.direct>
+Code-Review+2: Tin Lam <tin@irrational.io>
+Workflow+1: Tin Lam <tin@irrational.io>
+Submitted-by: Tin Lam <tin@irrational.io>
+Submitted-at: Fri, 12 Jan 2018 02:02:54 -0500
+Reviewed-on: https://review.gerrithub.io/393094
+Project: att-comdev/prometheus-openstack-exporter
+Branch: refs/heads/master
