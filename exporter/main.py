@@ -49,19 +49,17 @@ class OpenstackExporterHandler(BaseHTTPRequestHandler):
         url = urlparse.urlparse(self.path)
         if url.path == '/metrics':
             output = ''
-            try:
-                for collector in collectors:
-                    stats = collector.get_stats()
-                    if stats is not None:
-                        output = output + stats
-                self.send_response(200)
-                self.send_header('Content-Type', CONTENT_TYPE_LATEST)
-                self.end_headers()
-                self.wfile.write(output)
-            except:
-                self.send_response(500)
-                self.end_headers()
-                self.wfile.write(traceback.format_exc())
+            for collector in collectors:
+               try:
+                  stats = collector.get_stats()
+                  if stats is not None:
+                     output = output + stats
+               except:
+                  logger.warning("Could not get stats for collector {}".format(collector.get_cache_key()))
+            self.send_response(200)
+            self.send_header('Content-Type', CONTENT_TYPE_LATEST)
+            self.end_headers()
+            self.wfile.write(output)
         elif url.path == '/':
             self.send_response(200)
             self.end_headers()
