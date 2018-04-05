@@ -1,4 +1,6 @@
-nose
-sphinx
-python-dateutil
-simplejson
+#application
+python-dateutil==2.6.1
+requests==2.9.1
+simplejson==3.8.1
+pyyaml==3.12
+prometheus-client==0.2.0

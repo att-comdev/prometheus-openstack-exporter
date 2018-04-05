@@ -16,16 +16,19 @@
 from base import OSBase
 
 from urlparse import urlparse
-from prometheus_client import CollectorRegistry, generate_latest, Gauge, CONTENT_TYPE_LATEST
+from prometheus_client import CollectorRegistry, generate_latest, Gauge
 import logging
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s:%(levelname)s:%(message)s")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s:%(levelname)s:%(message)s")
 logger = logging.getLogger(__name__)
+
 
 class CheckOSApi(OSBase):
     """Class to check the status of OpenStack API services."""
 
     CHECK_MAP = {
-        'keystone': { 'path': '/', 'expect': [300], 'name': 'keystone-public-api'},
+        'keystone': {'path': '/', 'expect': [300], 'name': 'keystone-public-api'},
         'heat': {'path': '/', 'expect': [300], 'name': 'heat-api'},
         'heat-cfn': {'path': '/', 'expect': [300], 'name': 'heat-cfn-api'},
         'glance': {'path': '/', 'expect': [300], 'name': 'glance-api'},
@@ -72,28 +75,30 @@ class CheckOSApi(OSBase):
             status_code = 500
             if name not in self.CHECK_MAP:
                 logger.info(
-                    "No check found for service '%s', skipping it" % name)
-                status = self.UNKNOWN
-                check = {
-                    'name': name
+                    "No check found for service '%s', creating one" % name)
+                self.CHECK_MAP[name] = {
+                    'path': '/',
+                    'expect': [200, 300, 302, 401, 404],
+                    'name': name,
                 }
+            check = self.CHECK_MAP[name]
+            url = self._service_url(service['url'], check['path'])
+            r = self.osclient.raw_get(
+                url, token_required=check.get(
+                    'auth', False))
+
+            if r is not None:
+                status_code = r.status_code
+
+            if r is None or status_code not in check['expect']:
+                logger.info(
+                    "Service %s check failed "
+                    "(returned '%s' but expected '%s')" % (
+                        name, status_code, check['expect'])
+                )
+                status = self.FAIL
             else:
-                check = self.CHECK_MAP[name]
-                url = self._service_url(service['url'], check['path'])
-                r = self.osclient.raw_get(url, token_required=check.get('auth', False))
-
-                if r is not None:
-                    status_code = r.status_code
-
-                if r is None or status_code not in check['expect']:
-                    logger.info(
-                        "Service %s check failed "
-                        "(returned '%s' but expected '%s')" % (
-                            name, status_code, check['expect'])
-                    )
-                    status = self.FAIL
-                else:
-                    status = self.OK
+                status = self.OK
 
             check_array.append({
                 'service': name,
@@ -104,7 +109,6 @@ class CheckOSApi(OSBase):
             })
         return check_array
 
-
     def get_cache_key(self):
         return "check_os_api"
 
@@ -113,10 +117,16 @@ class CheckOSApi(OSBase):
         labels = ['region', 'url', 'service']
         check_api_data_cache = self.get_cache_data()
         for check_api_data in check_api_data_cache:
-            label_values = [check_api_data['region'], check_api_data['url'], check_api_data['service']]
-            gague_name = self.gauge_name_sanitize("check_{}_api".format(check_api_data['service']))
-            check_gauge = Gauge(gague_name,
-                         'Openstack API check. fail = 0, ok = 1 and unknown = 2',
-                         labels, registry=registry)
+            label_values = [
+                check_api_data['region'],
+                check_api_data['url'],
+                check_api_data['service']]
+            gague_name = self.gauge_name_sanitize(
+                "check_{}_api".format(check_api_data['service']))
+            check_gauge = Gauge(
+                gague_name,
+                'Openstack API check. fail = 0, ok = 1 and unknown = 2',
+                labels,
+                registry=registry)
             check_gauge.labels(*label_values).set(check_api_data['status'])
         return generate_latest(registry)

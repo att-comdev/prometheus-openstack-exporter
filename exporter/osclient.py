@@ -19,11 +19,15 @@ import dateutil.tz
 import requests
 import simplejson as json
 import logging
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s:%(levelname)s:%(message)s")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s:%(levelname)s:%(message)s")
 logger = logging.getLogger(__name__)
+
 
 class KeystoneException(Exception):
     pass
+
 
 class OSClient(object):
     """ Base class for querying the OpenStack API endpoints.
@@ -33,7 +37,16 @@ class OSClient(object):
     EXPIRATION_TOKEN_DELTA = datetime.timedelta(0, 30)
     states = {'up': 1, 'down': 0, 'disabled': 2}
 
-    def __init__(self, keystone_url, password, tenant_name, username, user_domain, region, timeout, retries):
+    def __init__(
+            self,
+            keystone_url,
+            password,
+            tenant_name,
+            username,
+            user_domain,
+            region,
+            timeout,
+            retries):
         self.keystone_url = keystone_url
         self.password = password
         self.tenant_name = tenant_name
@@ -53,7 +66,7 @@ class OSClient(object):
 
     def is_valid_token(self):
         now = datetime.datetime.now(tz=dateutil.tz.tzutc())
-        return self.token and self.valid_until and self.valid_until > now
+        return self.token is not None and self.valid_until is not None and self.valid_until > now
 
     def clear_token(self):
         self.token = None
@@ -68,7 +81,7 @@ class OSClient(object):
                     "password": {
                         "user": {
                             "name": self.username,
-                            "domain": { "id": self.user_domain },
+                            "domain": {"id": self.user_domain},
                             "password": self.password
                         }
                     }
@@ -76,7 +89,7 @@ class OSClient(object):
                 "scope": {
                     "project": {
                         "name": self.tenant_name,
-                        "domain": { "id": self.user_domain }
+                        "domain": {"id": self.user_domain}
                     }
                 }
             }
@@ -86,10 +99,15 @@ class OSClient(object):
                               '%s/auth/tokens' % self.keystone_url, data=data,
                               token_required=False)
         if not r:
-            logger.error("Cannot get a valid token from {}".format(self.keystone_url))
+            logger.error(
+                "Cannot get a valid token from {}".format(
+                    self.keystone_url))
 
         if r.status_code < 200 or r.status_code > 299:
-            logger.error("{} responded with code {}".format(self.keystone_url, r.status_code))
+            logger.error(
+                "{} responded with code {}".format(
+                    self.keystone_url,
+                    r.status_code))
 
         data = r.json()
         self.token = r.headers.get("X-Subject-Token")
@@ -138,11 +156,11 @@ class OSClient(object):
 
     def get_service(self, service_name):
         return next((x for x in self._service_catalog
-                    if x['name'] == service_name), None)
+                     if x['name'] == service_name), None)
 
     def raw_get(self, url, token_required=False):
         return self.make_request('get', url,
-                                           token_required=token_required)
+                                 token_required=token_required)
 
     def make_request(self, verb, url, data=None, token_required=True,
                      params=None):
@@ -151,11 +169,12 @@ class OSClient(object):
             'timeout': self.timeout,
             'headers': {'Content-type': 'application/json'}
         }
-        if token_required and not self.is_valid_token() and \
-           not self.get_token():
-            logger.error("Aborting request, no valid token")
-            return
-        elif token_required:
+        if token_required and not self.is_valid_token():
+            self.get_token()
+            if not self.is_valid_token():
+                logger.error("Aborting request, no valid token")
+                return
+        if token_required:
             kwargs['headers']['X-Auth-Token'] = self.token
 
         if data is not None:
@@ -170,14 +189,11 @@ class OSClient(object):
             r = func(**kwargs)
         except Exception as e:
             logger.error("Got exception for '%s': '%s'" %
-                              (kwargs['url'], e))
+                         (kwargs['url'], e))
             return
 
         logger.info("%s responded with status code %d" %
-                         (kwargs['url'], r.status_code))
-        if r.status_code == 401:
-            # Clear token in case it is revoked or invalid
-            self.clear_token()
+                    (kwargs['url'], r.status_code))
 
         return r
 
@@ -263,6 +279,7 @@ class OSClient(object):
                             logger.warning(msg)
                             continue
                     data['stat_value'] = self.states[data['state']]
-                    data['stat_name'] = "services_{}_{}".format(service, val['binary'])
+                    data['stat_name'] = "services_{}_{}".format(
+                        service, val['binary'])
                     worker_metrics.append(data)
         return worker_metrics

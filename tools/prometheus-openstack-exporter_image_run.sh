@@ -1,4 +1,5 @@
-# Copyright 2017 AT&T Intellectual Property.  All other rights reserved.
+#!/bin/bash
+# Copyright 2017 The Openstack-Helm Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,9 +12,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import setuptools
 
-setuptools.setup(
-    setup_requires=['pbr>=2.0.0'],
-    pbr=True
-)
+set -x
+
+IMAGE=$1
+
+docker run \
+    -p 9103:9103 \
+    --env-file sample_env_file \
+    --name prometheus-openstack-exporter ${IMAGE} \
+    &
+
+sleep 5
+
+RESULT="$(curl -i 'http://127.0.0.1:9103' | tr '\r' '\n' | head -1)"
+
+docker stop prometheus-openstack-exporter
+docker rm prometheus-openstack-exporter
+
+exit 0
+

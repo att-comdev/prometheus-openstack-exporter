@@ -15,10 +15,12 @@
 
 import re
 
+
 class OSBase(object):
     FAIL = 0
     OK = 1
     UNKNOWN = 2
+    GAUGE_NAME_FORMAT = "openstack_{}"
 
     def __init__(self, oscache, osclient):
         self.oscache = oscache
@@ -41,4 +43,8 @@ class OSBase(object):
         raise NotImplemented("Must be implemented by the subclass!")
 
     def gauge_name_sanitize(self, input):
-        return re.sub(r'[^a-zA-Z0-9:_]', '_', input)
+        if input.startswith("openstack_"):
+            return re.sub(r'[^a-zA-Z0-9:_]', '_', input)
+        else:
+            return self.GAUGE_NAME_FORMAT.format(
+                re.sub(r'[^a-zA-Z0-9:_]', '_', input))

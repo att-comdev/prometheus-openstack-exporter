@@ -5,383 +5,163 @@ Image for a prometheus exporter for openstack API derived metrics.
 
 ## Environment
 
-check sample_env_file provided in the source.
+check sample env file provided in the source.
 
-* OS_USERNAME
+* OS USERNAME
   - username associated with the monitoring tenant/project in openstack, used for polling openstack API, **required**
 
-* OS_PASSWORD
+* OS PASSWORD
   - password for the username associated with the monitoring tenant/project in openstack, used for polling openstack API, **required**
 
-* OS_PROJECT_NAME
+* OS PROJECT NAME
   - monitoring tenant/project in openstack, used for polling openstack API, **required**
 
-* OS_AUTH_URL
+* OS AUTH URL
   - openstack keystone API endpoint, **required**
 
-* LISTEN_PORT
+* LISTEN PORT
   - port to bind for prometheus scrape target
 
-* OS_REGION_NAME
+* OS REGION NAME
   - openstack region to use keystone service catalog against
 
-* TIMEOUT_SECONDS
+* TIMEOUT SECONDS
   - number of seconds before API calls should timeout
 
-* OS_POLLING_INTERVAL
+* OS POLLING INTERVAL
   - interval in seconds between API polls
 
-* OS_RETRIES
+* OS RETRIES
   - number of retries on API calls before failing
 
-* OS_CPU_OC_RATIO
+* OS CPU OC RATIO
   - CPU overcommit ratio for the hypervisor
 
-* OS_RAM_OC_RATIO=1
+* OS RAM OC RATIO=1
   - RAM overcommit ratio for the hypervisor
 
 ## Docker Usage
 
-docker run --env-file sample_env_file -it rakeshpatnaik/prometheus-openstack-exporter:v0.1
+docker run --env-file sample env file -it rakeshpatnaik/prometheus-openstack-exporter:v0.2
 
 ## sample test
-docker exec \<instance-id\> curl http://localhost:19103
+docker exec \<instance-id\> curl http://localhost:19103/metrics
 ```
-# HELP openstack_exporter_cache_refresh_duration_seconds Cache refresh duration in seconds.
-# TYPE openstack_exporter_cache_refresh_duration_seconds gauge
-openstack_exporter_cache_refresh_duration_seconds{region="RegionOne"} 0.12850117683410645
-# HELP check_openstack_api Openstack API check fail = 0, ok = 1 and unknown = 3
-# TYPE check_openstack_api gauge
-check_openstack_api{region="RegionOne",service="congress",status_code="NA",url="None"} 2.0
-# HELP check_openstack_api Openstack API check fail = 0, ok = 1 and unknown = 3
-# TYPE check_openstack_api gauge
-check_openstack_api{region="RegionOne",service="ceph",status_code="200",url="http://ceph-rgw.ceph.svc.cluster.local:8088"} 1.0
-# HELP check_openstack_api Openstack API check fail = 0, ok = 1 and unknown = 3
-# TYPE check_openstack_api gauge
-check_openstack_api{region="RegionOne",service="glance-api",status_code="300",url="http://glance-api.openstack.svc.cluster.local:9292"} 1.0
-# HELP check_openstack_api Openstack API check fail = 0, ok = 1 and unknown = 3
-# TYPE check_openstack_api gauge
-check_openstack_api{region="RegionOne",service="nova-api",status_code="200",url="http://nova-api.openstack.svc.cluster.local:8774"} 1.0
-# HELP check_openstack_api Openstack API check fail = 0, ok = 1 and unknown = 3
-# TYPE check_openstack_api gauge
-check_openstack_api{region="RegionOne",service="heat",status_code="NA",url="None"} 2.0
-# HELP check_openstack_api Openstack API check fail = 0, ok = 1 and unknown = 3
-# TYPE check_openstack_api gauge
-check_openstack_api{region="RegionOne",service="neutron-api",status_code="200",url="http://neutron-server.openstack.svc.cluster.local:9696"} 1.0
-# HELP check_openstack_api Openstack API check fail = 0, ok = 1 and unknown = 3
-# TYPE check_openstack_api gauge
-check_openstack_api{region="RegionOne",service="placement",status_code="NA",url="None"} 2.0
-# HELP check_openstack_api Openstack API check fail = 0, ok = 1 and unknown = 3
-# TYPE check_openstack_api gauge
-check_openstack_api{region="RegionOne",service="heat-cfn-api",status_code="300",url="http://heat-cfn.openstack.svc.cluster.local:8000"} 1.0
-# HELP check_openstack_api Openstack API check fail = 0, ok = 1 and unknown = 3
-# TYPE check_openstack_api gauge
-check_openstack_api{region="RegionOne",service="keystone-public-api",status_code="300",url="http://keystone-api.openstack.svc.cluster.local:80"} 1.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-dhcp-agent",state="disabled"} 0.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-l3-agent",state="up"} 100.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-metadata-agent",state="up"} 1.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="ubuntu-xenial",region="RegionOne",service="neutron-metadata-agent",state="up"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-metadata-agent",state="down"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-openvswitch-agent",state="up"} 1.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-openvswitch-agent",state="disabled"} 0.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-openvswitch-agent",state="down"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="ubuntu-xenial",region="RegionOne",service="neutron-l3-agent",state="up"} 0.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-metadata-agent",state="disabled"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="ubuntu-xenial",region="RegionOne",service="neutron-dhcp-agent",state="up"} 0.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-dhcp-agent",state="up"} 100.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-l3-agent",state="down"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-openvswitch-agent",state="down"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-l3-agent",state="up"} 1.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-dhcp-agent",state="down"} 0.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-metadata-agent",state="down"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-dhcp-agent",state="disabled"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-metadata-agent",state="disabled"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-dhcp-agent",state="up"} 1.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-openvswitch-agent",state="disabled"} 0.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-metadata-agent",state="up"} 100.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="ubuntu-xenial",region="RegionOne",service="neutron-openvswitch-agent",state="up"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-l3-agent",state="disabled"} 0.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-l3-agent",state="disabled"} 0.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-l3-agent",state="down"} 0.0
-# HELP neutron_agents_percent Openstack Neutron agent statistic
-# TYPE neutron_agents_percent gauge
-neutron_agents_percent{host="",region="RegionOne",service="neutron-openvswitch-agent",state="up"} 100.0
-# HELP neutron_agents Openstack Neutron agent statistic
-# TYPE neutron_agents gauge
-neutron_agents{host="",region="RegionOne",service="neutron-dhcp-agent",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-compute",state="up"} 1.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="compute",state="up"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-scheduler",state="disabled"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="conductor",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="nova-consoleauth-68775cf5c-spxsg",region="RegionOne",service="nova-consoleauth",state="up"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="conductor",state="up"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="conductor",state="disabled"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="nova-scheduler-b55bc6487-shlkw",region="RegionOne",service="nova-scheduler",state="up"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-conductor",state="down"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-compute",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="conductor",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="scheduler",state="up"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="compute",state="down"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-scheduler",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-consoleauth",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="consoleauth",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-compute",state="up"} 100.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-compute",state="disabled"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-conductor",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="compute",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="cert",state="disabled"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="compute",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-scheduler",state="down"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="scheduler",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-consoleauth",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="cert",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="cert",state="up"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="consoleauth",state="disabled"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-conductor",state="up"} 1.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="scheduler",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-conductor",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-scheduler",state="disabled"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="scheduler",state="up"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="conductor",state="down"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-consoleauth",state="up"} 100.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="compute",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="consoleauth",state="up"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-conductor",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="consoleauth",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="cert",state="up"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="ubuntu-xenial",region="RegionOne",service="nova-compute",state="up"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="consoleauth",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="consoleauth",state="up"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-scheduler",state="up"} 100.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-compute",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-scheduler",state="up"} 1.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="scheduler",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="compute",state="up"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-consoleauth",state="disabled"} 0.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="nova-conductor",state="up"} 100.0
-# HELP nova_services_percent Openstack Nova Service statistic
-# TYPE nova_services_percent gauge
-nova_services_percent{host="",region="RegionOne",service="cert",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="nova-conductor-64f989b787-xpt2h",region="RegionOne",service="nova-conductor",state="up"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="conductor",state="up"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-compute",state="disabled"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="cert",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-consoleauth",state="disabled"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="scheduler",state="down"} 0.0
-# HELP nova_services Openstack Nova Service statistic
-# TYPE nova_services gauge
-nova_services{host="",region="RegionOne",service="nova-consoleauth",state="up"} 1.0
-# HELP total_running_instances Openstack Hypervisor statistic
-# TYPE total_running_instances gauge
-total_running_instances{aggregate="",aggregate_id="",host="",region="RegionOne"} 0.0
-# HELP free_disk_GB Openstack Hypervisor statistic
-# TYPE free_disk_GB gauge
-free_disk_GB{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 9.0
-# HELP total_used_disk_GB Openstack Hypervisor statistic
-# TYPE total_used_disk_GB gauge
-total_used_disk_GB{aggregate="",aggregate_id="",host="",region="RegionOne"} 0.0
-# HELP total_running_tasks Openstack Hypervisor statistic
-# TYPE total_running_tasks gauge
-total_running_tasks{aggregate="",aggregate_id="",host="",region="RegionOne"} 0.0
-# HELP free_ram_MB Openstack Hypervisor statistic
-# TYPE free_ram_MB gauge
-free_ram_MB{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 15535.0
-# HELP total_free_vcpus Openstack Hypervisor statistic
-# TYPE total_free_vcpus gauge
-total_free_vcpus{aggregate="",aggregate_id="",host="",region="RegionOne"} 6.0
-# HELP used_ram_MB Openstack Hypervisor statistic
-# TYPE used_ram_MB gauge
-used_ram_MB{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 512.0
-# HELP total_free_disk_GB Openstack Hypervisor statistic
-# TYPE total_free_disk_GB gauge
-total_free_disk_GB{aggregate="",aggregate_id="",host="",region="RegionOne"} 9.0
-# HELP used_vcpus Openstack Hypervisor statistic
-# TYPE used_vcpus gauge
-used_vcpus{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 0.0
-# HELP running_tasks Openstack Hypervisor statistic
-# TYPE running_tasks gauge
-running_tasks{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 0.0
-# HELP used_disk_GB Openstack Hypervisor statistic
-# TYPE used_disk_GB gauge
-used_disk_GB{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 0.0
-# HELP total_used_vcpus Openstack Hypervisor statistic
-# TYPE total_used_vcpus gauge
-total_used_vcpus{aggregate="",aggregate_id="",host="",region="RegionOne"} 0.0
-# HELP running_instances Openstack Hypervisor statistic
-# TYPE running_instances gauge
-running_instances{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 0.0
-# HELP free_vcpus Openstack Hypervisor statistic
-# TYPE free_vcpus gauge
-free_vcpus{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 6.0
-# HELP total_free_ram_MB Openstack Hypervisor statistic
-# TYPE total_free_ram_MB gauge
-total_free_ram_MB{aggregate="",aggregate_id="",host="",region="RegionOne"} 15535.0
-# HELP total_used_ram_MB Openstack Hypervisor statistic
-# TYPE total_used_ram_MB gauge
-total_used_ram_MB{aggregate="",aggregate_id="",host="",region="RegionOne"} 512.0
+-------Sample truncated Output----
+# HELP openstack_total_used_ram_MB Openstack Hypervisor statistic
+# TYPE openstack_total_used_ram_MB gauge
+openstack_total_used_ram_MB{aggregate="",aggregate_id="",host="",region="RegionOne"} 6897.0
+# HELP openstack_total_used_vcpus Openstack Hypervisor statistic
+# TYPE openstack_total_used_vcpus gauge
+openstack_total_used_vcpus{aggregate="",aggregate_id="",host="",region="RegionOne"} 0.0
+# HELP openstack_used_ram_MB Openstack Hypervisor statistic
+# TYPE openstack_used_ram_MB gauge
+openstack_used_ram_MB{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 6897.0
+```
 
-```
+## Metrics
+Name     | Sample Labels | Sample Value | Description
+---------|---------------|--------------|------------
+openstack_exporter_cache_refresh_duration_seconds|region="RegionOne"| 0.3854649066925049
+openstack_check_neutron_api|region="RegionOne",service="neutron",url="http://neutron-server.openstack.svc.cluster.local:9696"| 1.0
+openstack_check_glance_api|region="RegionOne",service="glance",url="http://glance-api.openstack.svc.cluster.local:9292"| 1.0
+openstack_check_keystone_api|region="RegionOne",service="keystone",url="http://keystone-api.openstack.svc.cluster.local:80"| 1.0
+openstack_check_placement_api|region="RegionOne",service="placement",url="http://placement-api.openstack.svc.cluster.local:8778"| 1.0
+openstack_check_swift_api|region="RegionOne",service="swift",url="http://ceph-rgw.ceph.svc.cluster.local:8088"| 1.0
+openstack_check_nova_api|region="RegionOne",service="nova",url="http://nova-api.openstack.svc.cluster.local:8774"| 1.0
+openstack_services_neutron_neutron_metadata_agent|host="ubuntu-xenial",region="RegionOne",service="neutron-metadata-agent",state="up"| 1.0
+openstack_services_neutron_metadata_agent_down_percent|host="",region="RegionOne",service="neutron-metadata-agent",state="down"| 0.0
+openstack_services_neutron_openvswitch_agent_up_percent|host="",region="RegionOne",service="neutron-openvswitch-agent",state="up"| 100.0
+openstack_services_neutron_l3_agent_disabled_total|host="",region="RegionOne",service="neutron-l3-agent",state="disabled"| 0.0
+openstack_services_neutron_dhcp_agent_up_total|host="",region="RegionOne",service="neutron-dhcp-agent",state="up"| 1.0
+openstack_services_neutron_dhcp_agent_down_percent|host="",region="RegionOne",service="neutron-dhcp-agent",state="down"| 0.0
+openstack_services_neutron_l3_agent_up_percent|host="",region="RegionOne",service="neutron-l3-agent",state="up"| 100.0
+openstack_services_neutron_openvswitch_agent_up_total|host="",region="RegionOne",service="neutron-openvswitch-agent",state="up"| 1.0
+openstack_services_neutron_neutron_dhcp_agent|host="ubuntu-xenial",region="RegionOne",service="neutron-dhcp-agent",state="up"| 1.0
+openstack_services_neutron_openvswitch_agent_down_percent|host="",region="RegionOne",service="neutron-openvswitch-agent",state="down"| 0.0
+openstack_services_neutron_dhcp_agent_down_total|host="",region="RegionOne",service="neutron-dhcp-agent",state="down"| 0.0
+openstack_services_neutron_metadata_agent_up_percent|host="",region="RegionOne",service="neutron-metadata-agent",state="up"| 100.0
+openstack_services_neutron_l3_agent_up_total|host="",region="RegionOne",service="neutron-l3-agent",state="up"| 1.0
+openstack_services_neutron_neutron_openvswitch_agent|host="ubuntu-xenial",region="RegionOne",service="neutron-openvswitch-agent",state="up"| 1.0
+openstack_services_neutron_metadata_agent_disabled_total|host="",region="RegionOne",service="neutron-metadata-agent",state="disabled"| 0.0
+openstack_services_neutron_l3_agent_down_percent|host="",region="RegionOne",service="neutron-l3-agent",state="down"| 0.0
+openstack_services_neutron_metadata_agent_up_total|host="",region="RegionOne",service="neutron-metadata-agent",state="up"| 1.0
+openstack_services_neutron_openvswitch_agent_down_total|host="",region="RegionOne",service="neutron-openvswitch-agent",state="down"| 0.0
+openstack_services_neutron_dhcp_agent_disabled_percent|host="",region="RegionOne",service="neutron-dhcp-agent",state="disabled"| 0.0
+openstack_services_neutron_dhcp_agent_disabled_total|host="",region="RegionOne",service="neutron-dhcp-agent",state="disabled"| 0.0
+openstack_services_neutron_l3_agent_down_total|host="",region="RegionOne",service="neutron-l3-agent",state="down"| 0.0
+openstack_services_neutron_openvswitch_agent_disabled_percent|host="",region="RegionOne",service="neutron-openvswitch-agent",state="disabled"| 0.0
+openstack_services_neutron_metadata_agent_disabled_percent|host="",region="RegionOne",service="neutron-metadata-agent",state="disabled"| 0.0
+openstack_services_neutron_metadata_agent_down_total|host="",region="RegionOne",service="neutron-metadata-agent",state="down"| 0.0
+openstack_services_neutron_l3_agent_disabled_percent|host="",region="RegionOne",service="neutron-l3-agent",state="disabled"| 0.0
+openstack_services_neutron_openvswitch_agent_disabled_total|host="",region="RegionOne",service="neutron-openvswitch-agent",state="disabled"| 0.0
+openstack_services_neutron_neutron_l3_agent|host="ubuntu-xenial",region="RegionOne",service="neutron-l3-agent",state="up"| 1.0
+openstack_services_neutron_dhcp_agent_up_percent|host="",region="RegionOne",service="neutron-dhcp-agent",state="up"| 100.0
+openstack_services_nova_conductor_down_total|host="",region="RegionOne",service="nova-conductor",state="down"| 0.0
+openstack_services_nova_consoleauth_disabled_percent|host="",region="RegionOne",service="nova-consoleauth",state="disabled"| 0.0
+openstack_services_nova_scheduler_down_total|host="",region="RegionOne",service="nova-scheduler",state="down"| 0.0
+openstack_services_nova_conductor_disabled_total|host="",region="RegionOne",service="nova-conductor",state="disabled"| 0.0
+openstack_services_nova_conductor_down_percent|host="",region="RegionOne",service="nova-conductor",state="down"| 0.0
+openstack_services_nova_conductor_disabled_percent|host="",region="RegionOne",service="nova-conductor",state="disabled"| 0.0
+openstack_services_nova_nova_conductor|host="nova-conductor-d557644d8-5rh8z",region="RegionOne",service="nova-conductor",state="up"| 1.0
+openstack_services_nova_compute_disabled_total|host="",region="RegionOne",service="nova-compute",state="disabled"| 0.0
+openstack_services_nova_nova_compute|host="ubuntu-xenial",region="RegionOne",service="nova-compute",state="down"| 0.0
+openstack_services_nova_scheduler_disabled_percent|host="",region="RegionOne",service="nova-scheduler",state="disabled"| 0.0
+openstack_services_nova_conductor_up_percent|host="",region="RegionOne",service="nova-conductor",state="up"| 100.0
+openstack_services_nova_scheduler_up_percent|host="",region="RegionOne",service="nova-scheduler",state="up"| 100.0
+openstack_services_nova_consoleauth_up_percent|host="",region="RegionOne",service="nova-consoleauth",state="up"| 100.0
+openstack_services_nova_compute_up_percent|host="",region="RegionOne",service="nova-compute",state="up"| 0.0
+openstack_services_nova_conductor_up_total|host="",region="RegionOne",service="nova-conductor",state="up"| 1.0
+openstack_services_nova_consoleauth_up_total|host="",region="RegionOne",service="nova-consoleauth",state="up"| 1.0
+openstack_services_nova_scheduler_disabled_total|host="",region="RegionOne",service="nova-scheduler",state="disabled"| 0.0
+openstack_services_nova_consoleauth_disabled_total|host="",region="RegionOne",service="nova-consoleauth",state="disabled"| 0.0
+openstack_services_nova_compute_up_total|host="",region="RegionOne",service="nova-compute",state="up"| 0.0
+openstack_services_nova_consoleauth_down_percent|host="",region="RegionOne",service="nova-consoleauth",state="down"| 0.0
+openstack_services_nova_compute_disabled_percent|host="",region="RegionOne",service="nova-compute",state="disabled"| 0.0
+openstack_services_nova_scheduler_up_total|host="",region="RegionOne",service="nova-scheduler",state="up"| 1.0
+openstack_services_nova_scheduler_down_percent|host="",region="RegionOne",service="nova-scheduler",state="down"| 0.0
+openstack_services_nova_nova_scheduler|host="nova-scheduler-7cbb4b94d8-n88gh",region="RegionOne",service="nova-scheduler",state="up"| 1.0
+openstack_services_nova_compute_down_total|host="",region="RegionOne",service="nova-compute",state="down"| 1.0
+openstack_services_nova_compute_down_percent|host="",region="RegionOne",service="nova-compute",state="down"| 100.0
+openstack_services_nova_nova_consoleauth|host="nova-consoleauth-759864bc4-4tgmm",region="RegionOne",service="nova-consoleauth",state="up"| 1.0
+openstack_services_nova_consoleauth_down_total|host="",region="RegionOne",service="nova-consoleauth",state="down"| 0.0
+openstack_total_running_instances|aggregate="",aggregate_id="",host="",region="RegionOne"| 0.0
+openstack_used_disk_GB|aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"| 9.0
+openstack_free_disk_GB|aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"| 19.0
+openstack_total_running_tasks|aggregate="",aggregate_id="",host="",region="RegionOne"| 0.0
+openstack_total_free_ram_MB|aggregate="",aggregate_id="",host="",region="RegionOne"| 15535.0
+openstack_running_tasks|aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"| 0.0
+openstack_total_used_disk_GB|aggregate="",aggregate_id="",host="",region="RegionOne"| 9.0
+openstack_total_free_vcpus|aggregate="",aggregate_id="",host="",region="RegionOne"| 4.0
+openstack_free_vcpus|aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"| 4.0
+openstack_running_instances|aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"| 0.0
+openstack_free_ram_MB|aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"| 15535.0
+openstack_total_free_disk_GB|aggregate="",aggregate_id="",host="",region="RegionOne"| 19.0
+openstack_used_vcpus|aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"| 0.0
+openstack_total_used_ram_MB|aggregate="",aggregate_id="",host="",region="RegionOne"| 6897.0
+openstack_total_used_vcpus|aggregate="",aggregate_id="",host="",region="RegionOne"| 0.0
+openstack_used_ram_MB|aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"| 6897.0
+openstack_check_cinder_api|region="RegionOne",service="cinder",url="http://cinder-api.openstack.svc.cluster.local:8776"| 1.0
+openstack_check_cinder_api|region="RegionOne",service="cinder",url="http://cinder-api.openstack.svc.cluster.local:8776"| 1.0
+openstack_check_cinder_api|region="RegionOne",service="cinder",url="http://cinder-api.openstack.svc.cluster.local:8776"| 1.0
+openstack_services_cinder_scheduler_up_percent|host="",region="RegionOne",service="cinder-scheduler",state="up"| 100.0
+openstack_services_cinder_volume_down_total|host="",region="RegionOne",service="cinder-volume",state="down"| 0.0
+openstack_services_cinder_volume_up_percent|host="",region="RegionOne",service="cinder-volume",state="up"| 100.0
+openstack_services_cinder_scheduler_disabled_total|host="",region="RegionOne",service="cinder-scheduler",state="disabled"| 0.0
+openstack_services_cinder_volume_disabled_total|host="",region="RegionOne",service="cinder-volume",state="disabled"| 0.0
+openstack_services_cinder_volume_disabled_percent|host="",region="RegionOne",service="cinder-volume",state="disabled"| 0.0
+openstack_services_cinder_backup_down_percent|host="",region="RegionOne",service="cinder-backup",state="down"| 0.0
+openstack_services_cinder_cinder_scheduler|host="cinder-volume-worker",region="RegionOne",service="cinder-scheduler",state="up"| 1.0
+openstack_services_cinder_scheduler_disabled_percent|host="",region="RegionOne",service="cinder-scheduler",state="disabled"| 0.0
+openstack_services_cinder_backup_disabled_total|host="",region="RegionOne",service="cinder-backup",state="disabled"| 0.0
+openstack_services_cinder_cinder_backup|host="cinder-volume-worker",region="RegionOne",service="cinder-backup",state="up"| 1.0
+openstack_services_cinder_scheduler_down_total|host="",region="RegionOne",service="cinder-scheduler",state="down"| 0.0
+openstack_services_cinder_backup_down_total|host="",region="RegionOne",service="cinder-backup",state="down"| 0.0
+openstack_services_cinder_cinder_volume|host="cinder-volume-worker@rbd1",region="RegionOne",service="cinder-volume",state="up"| 1.0
+openstack_services_cinder_backup_up_total|host="",region="RegionOne",service="cinder-backup",state="up"| 1.0
+openstack_services_cinder_scheduler_down_percent|host="",region="RegionOne",service="cinder-scheduler",state="down"| 0.0
+openstack_services_cinder_volume_up_total|host="",region="RegionOne",service="cinder-volume",state="up"| 1.0
+openstack_services_cinder_backup_up_percent|host="",region="RegionOne",service="cinder-backup",state="up"| 100.0
+openstack_services_cinder_volume_down_percent|host="",region="RegionOne",service="cinder-volume",state="down"| 0.0
+openstack_services_cinder_backup_disabled_percent|host="",region="RegionOne",service="cinder-backup",state="disabled"| 0.0
+openstack_services_cinder_scheduler_up_total|host="",region="RegionOne",service="cinder-scheduler",state="up"| 1.0
