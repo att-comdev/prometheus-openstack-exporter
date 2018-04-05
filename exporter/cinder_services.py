@@ -16,16 +16,20 @@
 from base import OSBase
 from collections import Counter
 from collections import defaultdict
-from prometheus_client import CollectorRegistry, generate_latest, Gauge, CONTENT_TYPE_LATEST
+from prometheus_client import CollectorRegistry, generate_latest, Gauge
 import logging
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s:%(levelname)s:%(message)s")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s:%(levelname)s:%(message)s")
 logger = logging.getLogger(__name__)
+
 
 class CinderServiceStats(OSBase):
     """ Class to report the statistics on Cinder services.
 
         state of workers broken down by state
     """
+
     def build_cache_data(self):
 
         aggregated_workers = defaultdict(Counter)
@@ -63,12 +67,18 @@ class CinderServiceStats(OSBase):
         labels = ['region', 'host', 'service', 'state']
         cinder_services_stats_cache = self.get_cache_data()
         for cinder_services_stat in cinder_services_stats_cache:
-            stat_gauge = Gauge(self.gauge_name_sanitize(cinder_services_stat['stat_name']),
-                         'Openstack Cinder Service statistic',
-                         labels, registry=registry)
+            stat_gauge = Gauge(
+                self.gauge_name_sanitize(
+                    cinder_services_stat['stat_name']),
+                'Openstack Cinder Service statistic',
+                labels,
+                registry=registry)
             label_values = [self.osclient.region,
                             cinder_services_stat.get('host', ''),
                             cinder_services_stat.get('service', ''),
                             cinder_services_stat.get('state', '')]
-            stat_gauge.labels(*label_values).set(cinder_services_stat['stat_value'])
+            stat_gauge.labels(
+                *
+                label_values).set(
+                cinder_services_stat['stat_value'])
         return generate_latest(registry)

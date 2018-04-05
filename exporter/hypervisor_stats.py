@@ -15,10 +15,13 @@
 
 from base import OSBase
 
-from prometheus_client import CollectorRegistry, generate_latest, Gauge, CONTENT_TYPE_LATEST
+from prometheus_client import CollectorRegistry, generate_latest, Gauge
 import logging
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s:%(levelname)s:%(message)s")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s:%(levelname)s:%(message)s")
 logger = logging.getLogger(__name__)
+
 
 class HypervisorStats(OSBase):
     """ Class to report the statistics on Nova hypervisors."""
@@ -32,7 +35,12 @@ class HypervisorStats(OSBase):
         'vcpus_used': 'used_vcpus',
     }
 
-    def __init__(self, oscache, osclient, cpu_overcommit_ratio, ram_overcommit_ratio):
+    def __init__(
+            self,
+            oscache,
+            osclient,
+            cpu_overcommit_ratio,
+            ram_overcommit_ratio):
         super(HypervisorStats, self).__init__(oscache, osclient)
         self.cpu_overcommit_ratio = cpu_overcommit_ratio
         self.ram_overcommit_ratio = ram_overcommit_ratio
@@ -130,9 +138,12 @@ class HypervisorStats(OSBase):
         labels = ['region', 'host', 'aggregate', 'aggregate_id']
         hypervisor_stats_cache = self.get_cache_data()
         for hypervisor_stat in hypervisor_stats_cache:
-            stat_gauge = Gauge(self.gauge_name_sanitize(hypervisor_stat['stat_name']),
-                         'Openstack Hypervisor statistic',
-                         labels, registry=registry)
+            stat_gauge = Gauge(
+                self.gauge_name_sanitize(
+                    hypervisor_stat['stat_name']),
+                'Openstack Hypervisor statistic',
+                labels,
+                registry=registry)
             label_values = [self.osclient.region,
                             hypervisor_stat.get('host', ''),
                             hypervisor_stat.get('aggregate', ''),

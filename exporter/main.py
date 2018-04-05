@@ -16,9 +16,7 @@
 import argparse
 import yaml
 import os
-import traceback
 import urlparse
-from threading import Thread
 from BaseHTTPServer import BaseHTTPRequestHandler
 from BaseHTTPServer import HTTPServer
 from SocketServer import ForkingMixIn
@@ -33,13 +31,17 @@ from cinder_services import CinderServiceStats
 from hypervisor_stats import HypervisorStats
 
 import logging
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s:%(levelname)s:%(message)s")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s:%(levelname)s:%(message)s")
 logger = logging.getLogger(__name__)
 
 collectors = []
 
+
 class ForkingHTTPServer(ForkingMixIn, HTTPServer):
     pass
+
 
 class OpenstackExporterHandler(BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -50,12 +52,14 @@ class OpenstackExporterHandler(BaseHTTPRequestHandler):
         if url.path == '/metrics':
             output = ''
             for collector in collectors:
-               try:
-                  stats = collector.get_stats()
-                  if stats is not None:
-                     output = output + stats
-               except:
-                  logger.warning("Could not get stats for collector {}".format(collector.get_cache_key()))
+                try:
+                    stats = collector.get_stats()
+                    if stats is not None:
+                        output = output + stats
+                except BaseException:
+                    logger.warning(
+                        "Could not get stats for collector {}".format(
+                            collector.get_cache_key()))
             self.send_response(200)
             self.send_header('Content-Type', CONTENT_TYPE_LATEST)
             self.end_headers()
@@ -80,9 +84,10 @@ def handler(*args, **kwargs):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(usage=__doc__,
-                                     description='Prometheus OpenStack exporter',
-                                     formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(
+        usage=__doc__,
+        description='Prometheus OpenStack exporter',
+        formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('--config-file', nargs='?',
                         help='Configuration file path',
                         type=argparse.FileType('r'),
@@ -94,17 +99,41 @@ if __name__ == '__main__':
 
     os_keystone_url = config.get('OS_AUTH_URL', os.getenv('OS_AUTH_URL'))
     os_password = config.get('OS_PASSWORD', os.getenv('OS_PASSWORD'))
-    os_tenant_name = config.get('OS_PROJECT_NAME', os.getenv('OS_PROJECT_NAME'))
+    os_tenant_name = config.get(
+        'OS_PROJECT_NAME',
+        os.getenv('OS_PROJECT_NAME'))
     os_username = config.get('OS_USERNAME', os.getenv('OS_USERNAME'))
-    os_user_domain = config.get('OS_USER_DOMAIN_NAME', os.getenv('OS_USER_DOMAIN_NAME'))
+    os_user_domain = config.get(
+        'OS_USER_DOMAIN_NAME',
+        os.getenv('OS_USER_DOMAIN_NAME'))
     os_region = config.get('OS_REGION_NAME', os.getenv('OS_REGION_NAME'))
-    os_timeout = config.get('TIMEOUT_SECONDS', int(os.getenv('TIMEOUT_SECONDS', 10)))
-    os_polling_interval = config.get('OS_POLLING_INTERVAL', int(os.getenv('OS_POLLING_INTERVAL', 900)))
+    os_timeout = config.get(
+        'TIMEOUT_SECONDS', int(
+            os.getenv(
+                'TIMEOUT_SECONDS', 10)))
+    os_polling_interval = config.get(
+        'OS_POLLING_INTERVAL', int(
+            os.getenv(
+                'OS_POLLING_INTERVAL', 900)))
     os_retries = config.get('OS_RETRIES', int(os.getenv('OS_RETRIES', 1)))
-    os_cpu_overcomit_ratio = config.get('OS_CPU_OC_RATIO', float(os.getenv('OS_CPU_OC_RATIO', 1)))
-    os_ram_overcomit_ratio = config.get('OS_RAM_OC_RATIO', float(os.getenv('OS_RAM_OC_RATIO', 1)))
+    os_cpu_overcomit_ratio = config.get(
+        'OS_CPU_OC_RATIO', float(
+            os.getenv(
+                'OS_CPU_OC_RATIO', 1)))
+    os_ram_overcomit_ratio = config.get(
+        'OS_RAM_OC_RATIO', float(
+            os.getenv(
+                'OS_RAM_OC_RATIO', 1)))
 
-    osclient = OSClient(os_keystone_url, os_password, os_tenant_name, os_username, os_user_domain, os_region, os_timeout, os_retries)
+    osclient = OSClient(
+        os_keystone_url,
+        os_password,
+        os_tenant_name,
+        os_username,
+        os_user_domain,
+        os_region,
+        os_timeout,
+        os_retries)
     oscache = OSCache(os_polling_interval, os_region)
     collectors.append(oscache)
 
@@ -116,11 +145,18 @@ if __name__ == '__main__':
     collectors.append(cinder_service_stats)
     nova_service_stats = NovaServiceStats(oscache, osclient)
     collectors.append(nova_service_stats)
-    hypervisor_stats = HypervisorStats(oscache, osclient, os_cpu_overcomit_ratio, os_ram_overcomit_ratio)
+    hypervisor_stats = HypervisorStats(
+        oscache,
+        osclient,
+        os_cpu_overcomit_ratio,
+        os_ram_overcomit_ratio)
     collectors.append(hypervisor_stats)
 
     oscache.start()
 
-    listen_port = config.get('LISTEN_PORT', int(os.getenv('LISTEN_PORT', 19103)))
+    listen_port = config.get(
+        'LISTEN_PORT', int(
+            os.getenv(
+                'LISTEN_PORT', 9103)))
     server = ForkingHTTPServer(('', listen_port), handler)
     server.serve_forever()

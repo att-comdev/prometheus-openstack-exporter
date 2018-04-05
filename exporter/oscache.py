@@ -15,26 +15,27 @@
 
 from threading import Thread
 from threading import Lock
-import pickle
-from prometheus_client import CollectorRegistry, generate_latest, Gauge, CONTENT_TYPE_LATEST
-from os import environ as env
-from os import rename, path
+from prometheus_client import CollectorRegistry, generate_latest, Gauge
 from time import sleep, time
 import logging
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s:%(levelname)s:%(message)s")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s:%(levelname)s:%(message)s")
 logger = logging.getLogger(__name__)
 
-class ThreadSafeDict(dict) :
-    def __init__(self, * p_arg, ** n_arg) :
+
+class ThreadSafeDict(dict):
+    def __init__(self, * p_arg, ** n_arg):
         dict.__init__(self, * p_arg, ** n_arg)
         self._lock = Lock()
 
-    def __enter__(self) :
+    def __enter__(self):
         self._lock.acquire()
         return self
 
-    def __exit__(self, type, value, traceback) :
+    def __exit__(self, type, value, traceback):
         self._lock.release()
+
 
 class OSCache(Thread):
 
@@ -56,10 +57,13 @@ class OSCache(Thread):
             start_time = time()
             for osclient in self.osclients:
                 try:
-                    self.cache[osclient.get_cache_key()] = osclient.build_cache_data()
+                    self.cache[osclient.get_cache_key(
+                    )] = osclient.build_cache_data()
                 except Exception as e:
                     logger.error(str(e))
-                    logger.error("failed to get data for cache key {}".format(osclient.get_cache_key()))
+                    logger.error(
+                        "failed to get data for cache key {}".format(
+                            osclient.get_cache_key()))
             self.duration = time() - start_time
             sleep(self.refresh_interval)
 
