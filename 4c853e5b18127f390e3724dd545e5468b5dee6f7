@@ -1,0 +1,9 @@
+Verified+1: Jenkins <attcomdev.jenkins@gmail.com>
+Code-Review+2: Pete Birley <pete@port.direct>
+Code-Review+2: <wilkers.steve@gmail.com>
+Workflow+1: <wilkers.steve@gmail.com>
+Submitted-by: <wilkers.steve@gmail.com>
+Submitted-at: Thu, 19 Apr 2018 12:08:20 -0400
+Reviewed-on: https://review.gerrithub.io/395985
+Project: att-comdev/prometheus-openstack-exporter
+Branch: refs/heads/master
