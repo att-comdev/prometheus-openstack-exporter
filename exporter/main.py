@@ -99,6 +99,7 @@ if __name__ == '__main__':
 
     os_keystone_url = config.get('OS_AUTH_URL', os.getenv('OS_AUTH_URL'))
     os_password = config.get('OS_PASSWORD', os.getenv('OS_PASSWORD'))
+    os_password = os_password.strip("\'")
     os_tenant_name = config.get(
         'OS_PROJECT_NAME',
         os.getenv('OS_PROJECT_NAME'))
