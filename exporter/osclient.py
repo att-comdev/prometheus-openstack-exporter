@@ -62,6 +62,7 @@ class OSClient(object):
             'http://', requests.adapters.HTTPAdapter(max_retries=retries))
         self.session.mount(
             'https://', requests.adapters.HTTPAdapter(max_retries=retries))
+        self.session.verify = False
         self._service_catalog = []
 
     def is_valid_token(self):
@@ -81,7 +82,7 @@ class OSClient(object):
                     "password": {
                         "user": {
                             "name": self.username,
-                            "domain": {"id": self.user_domain},
+                            "domain": {"name": self.user_domain},
                             "password": self.password
                         }
                     }
@@ -89,7 +90,7 @@ class OSClient(object):
                 "scope": {
                     "project": {
                         "name": self.tenant_name,
-                        "domain": {"id": self.user_domain}
+                        "domain": {"name": self.user_domain}
                     }
                 }
             }
