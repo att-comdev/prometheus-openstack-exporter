@@ -2,6 +2,15 @@ Prometheus Openstack Exporter
 ============
 
 Image for a prometheus exporter for openstack API derived metrics.
+Compared to the upstream repo, this copy has fixed several critical bugs:
+
+* Port confiction with Collectd
+
+* Multi-registration of the same metric name
+
+* Wrong reference to the OpenStack enviroment variables
+
+* Do not support insecure mode for https queries
 
 ## Environment
 
@@ -42,10 +51,13 @@ check sample env file provided in the source.
 
 ## Docker Usage
 
-docker run --env-file sample env file -it rakeshpatnaik/prometheus-openstack-exporter:v0.2
+docker run --name bottlenecks-openstack-exporter \
+  -v /tmp:/tmp \
+  -p 9104:9104 --env-file sample_env_file \
+  -it gabrielyuyang/att-prometheus-openstack-exporter:latest
 
 ## sample test
-docker exec \<instance-id\> curl http://localhost:19103/metrics
+docker exec \<instance-id\> curl http://localhost:9104/metrics
 ```
 -------Sample truncated Output----
 # HELP openstack_total_used_ram_MB Openstack Hypervisor statistic
@@ -59,7 +71,8 @@ openstack_total_used_vcpus{aggregate="",aggregate_id="",host="",region="RegionOn
 openstack_used_ram_MB{aggregate="",aggregate_id="",host="ubuntu-xenial",region="RegionOne"} 6897.0
 ```
 
-## Metrics
+## Metrics Table
+
 Name     | Sample Labels | Sample Value | Description
 ---------|---------------|--------------|------------
 openstack_exporter_cache_refresh_duration_seconds|region="RegionOne"| 0.3854649066925049
