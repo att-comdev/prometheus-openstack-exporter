@@ -1,5 +1,5 @@
 FROM          ubuntu:16.04
-MAINTAINER    Rakesh Patnaik (patsrakesh@gmail.com)
+MAINTAINER    Yang (Gabriel) Yu (gabriel.yuyang@gmail.com)
 
 RUN           apt-get -y update \
               && apt-get -y install curl python-dateutil python-requests python-simplejson python-yaml python-prometheus-client\
@@ -10,6 +10,6 @@ RUN           mkdir /usr/local/bin/exporter
 COPY          exporter /usr/local/bin/exporter
 RUN           chmod +x /usr/local/bin/exporter/main.py
 
-EXPOSE        9103
+EXPOSE        9104
 
 CMD           ["/usr/local/bin/exporter/main.py"]

@@ -13,10 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from base import OSBase
+from base import OSBase, OSCollector
 from collections import Counter
 from collections import defaultdict
-from prometheus_client import CollectorRegistry, generate_latest, Gauge
+from prometheus_client import CollectorRegistry, generate_latest
+from prometheus_client.core import GaugeMetricFamily
 import logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -68,16 +69,26 @@ class NovaServiceStats(OSBase):
         registry = CollectorRegistry()
         labels = ['region', 'host', 'service', 'state']
         services_stats_cache = self.get_cache_data()
+        services_stats_cache.sort(key=self.take_stat_name)
+        REGISTRY_FLAG = ''
+        stat_gauge = []
+
         for services_stat in services_stats_cache:
-            stat_gauge = Gauge(
-                self.gauge_name_sanitize(
-                    services_stat['stat_name']),
-                'Openstack Nova Service statistic',
-                labels,
-                registry=registry)
             label_values = [self.osclient.region,
                             services_stat.get('host', ''),
                             services_stat.get('service', ''),
                             services_stat.get('state', '')]
-            stat_gauge.labels(*label_values).set(services_stat['stat_value'])
+            if REGISTRY_FLAG != services_stat['stat_name']:
+                if REGISTRY_FLAG:
+                    registry.register(OSCollector(stat_gauge))
+                stat_gauge = GaugeMetricFamily(
+                    self.gauge_name_sanitize(
+                        services_stat['stat_name']),
+                    'Openstack Nova Service statistic',
+                    labels=labels)
+                REGISTRY_FLAG = services_stat['stat_name']
+
+            stat_gauge.add_metric(label_values,
+                                  services_stat['stat_value'])
+        registry.register(OSCollector(stat_gauge))
         return generate_latest(registry)

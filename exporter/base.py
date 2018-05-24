@@ -16,6 +16,15 @@
 import re
 
 
+class OSCollector(object):
+
+    def __init__(self, OSMetrics):
+        self.OSMetrics = OSMetrics
+
+    def collect(self):
+        yield self.OSMetrics
+
+
 class OSBase(object):
     FAIL = 0
     OK = 1
@@ -26,6 +35,9 @@ class OSBase(object):
         self.oscache = oscache
         self.osclient = osclient
         self.oscache.cache_me(self)
+
+    def take_stat_name(self, elem):
+        return elem['stat_name']
 
     def get_cache_data(self):
         return self.oscache.get_cache_data(self.get_cache_key())

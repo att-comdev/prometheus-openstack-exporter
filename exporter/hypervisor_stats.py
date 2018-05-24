@@ -13,9 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from base import OSBase
+from base import OSBase, OSCollector
 
-from prometheus_client import CollectorRegistry, generate_latest, Gauge
+from prometheus_client import CollectorRegistry, generate_latest
+from prometheus_client.core import GaugeMetricFamily
 import logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -137,16 +138,27 @@ class HypervisorStats(OSBase):
         registry = CollectorRegistry()
         labels = ['region', 'host', 'aggregate', 'aggregate_id']
         hypervisor_stats_cache = self.get_cache_data()
+        hypervisor_stats_cache.sort(key=self.take_stat_name)
+        REGISTRY_FLAG = ''
+        stat_gauge = []
+
         for hypervisor_stat in hypervisor_stats_cache:
-            stat_gauge = Gauge(
-                self.gauge_name_sanitize(
-                    hypervisor_stat['stat_name']),
-                'Openstack Hypervisor statistic',
-                labels,
-                registry=registry)
             label_values = [self.osclient.region,
                             hypervisor_stat.get('host', ''),
                             hypervisor_stat.get('aggregate', ''),
                             hypervisor_stat.get('aggregate_id', '')]
-            stat_gauge.labels(*label_values).set(hypervisor_stat['stat_value'])
+
+            if REGISTRY_FLAG != hypervisor_stat['stat_name']:
+                if REGISTRY_FLAG:
+                    registry.register(OSCollector(stat_gauge))
+                stat_gauge = GaugeMetricFamily(
+                    self.gauge_name_sanitize(
+                        hypervisor_stat['stat_name']),
+                    'Openstack Hypervisor statistic',
+                    labels=labels)
+                REGISTRY_FLAG = hypervisor_stat['stat_name']
+
+            stat_gauge.add_metric(label_values,
+                                  hypervisor_stat['stat_value'])
+        registry.register(OSCollector(stat_gauge))
         return generate_latest(registry)

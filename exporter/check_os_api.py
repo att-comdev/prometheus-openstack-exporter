@@ -13,10 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from base import OSBase
+from base import OSBase, OSCollector
 
 from urlparse import urlparse
-from prometheus_client import CollectorRegistry, generate_latest, Gauge
+from prometheus_client import CollectorRegistry, generate_latest
+from prometheus_client.core import GaugeMetricFamily
 import logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -112,21 +113,34 @@ class CheckOSApi(OSBase):
     def get_cache_key(self):
         return "check_os_api"
 
+    def take_service_name(self, elem):
+        return elem['service']
+
     def get_stats(self):
         registry = CollectorRegistry()
         labels = ['region', 'url', 'service']
         check_api_data_cache = self.get_cache_data()
+        check_api_data_cache.sort(key=self.take_service_name)
+        REGISTRY_FLAG = ''
+        check_gauge = []
+
         for check_api_data in check_api_data_cache:
             label_values = [
                 check_api_data['region'],
                 check_api_data['url'],
                 check_api_data['service']]
-            gague_name = self.gauge_name_sanitize(
+            gauge_name = self.gauge_name_sanitize(
                 "check_{}_api".format(check_api_data['service']))
-            check_gauge = Gauge(
-                gague_name,
-                'Openstack API check. fail = 0, ok = 1 and unknown = 2',
-                labels,
-                registry=registry)
-            check_gauge.labels(*label_values).set(check_api_data['status'])
+
+            if REGISTRY_FLAG != gauge_name:
+                if REGISTRY_FLAG:
+                    registry.register(OSCollector(check_gauge))
+                check_gauge = GaugeMetricFamily(
+                    gauge_name,
+                    'Openstack API check. fail = 0, ok = 1 and unknown = 2',
+                    labels=labels)
+                REGISTRY_FLAG = gauge_name
+
+            check_gauge.add_metric(label_values, check_api_data['status'])
+        registry.register(OSCollector(check_gauge))
         return generate_latest(registry)

@@ -13,10 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from base import OSBase
+from base import OSBase, OSCollector
 from collections import Counter
 from collections import defaultdict
-from prometheus_client import CollectorRegistry, generate_latest, Gauge
+from prometheus_client import CollectorRegistry, generate_latest
+from prometheus_client.core import GaugeMetricFamily
 import logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -67,19 +68,26 @@ class NeutronAgentStats(OSBase):
         registry = CollectorRegistry()
         labels = ['region', 'host', 'service', 'state']
         neutron_agent_stats_cache = self.get_cache_data()
+        neutron_agent_stats_cache.sort(key=self.take_stat_name)
+        REGISTRY_FLAG = ''
+        stat_gauge = []
+
         for neutron_agent_stat in neutron_agent_stats_cache:
-            stat_gauge = Gauge(
-                self.gauge_name_sanitize(
-                    neutron_agent_stat['stat_name']),
-                'Openstack Neutron agent statistic',
-                labels,
-                registry=registry)
             label_values = [self.osclient.region,
                             neutron_agent_stat.get('host', ''),
                             neutron_agent_stat.get('service', ''),
                             neutron_agent_stat.get('state', '')]
-            stat_gauge.labels(
-                *
-                label_values).set(
-                neutron_agent_stat['stat_value'])
+            if REGISTRY_FLAG != neutron_agent_stat['stat_name']:
+                if REGISTRY_FLAG:
+                    registry.register(OSCollector(stat_gauge))
+                stat_gauge = GaugeMetricFamily(
+                    self.gauge_name_sanitize(
+                        neutron_agent_stat['stat_name']),
+                    'Openstack Neutron agent statistic',
+                    labels=labels)
+                REGISTRY_FLAG = neutron_agent_stat['stat_name']
+
+            stat_gauge.add_metric(label_values,
+                                  neutron_agent_stat['stat_value'])
+        registry.register(OSCollector(stat_gauge))
         return generate_latest(registry)

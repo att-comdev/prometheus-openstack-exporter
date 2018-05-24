@@ -99,6 +99,7 @@ if __name__ == '__main__':
 
     os_keystone_url = config.get('OS_AUTH_URL', os.getenv('OS_AUTH_URL'))
     os_password = config.get('OS_PASSWORD', os.getenv('OS_PASSWORD'))
+    os_password = os_password.strip("\'")
     os_tenant_name = config.get(
         'OS_PROJECT_NAME',
         os.getenv('OS_PROJECT_NAME'))
@@ -157,6 +158,6 @@ if __name__ == '__main__':
     listen_port = config.get(
         'LISTEN_PORT', int(
             os.getenv(
-                'LISTEN_PORT', 9103)))
+                'LISTEN_PORT', 9104)))
     server = ForkingHTTPServer(('', listen_port), handler)
     server.serve_forever()
