@@ -13,10 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from base import OSBase
+from base import OSBase, OSCollector
 from collections import Counter
 from collections import defaultdict
-from prometheus_client import CollectorRegistry, generate_latest, Gauge
+from prometheus_client import CollectorRegistry, generate_latest
+from prometheus_client.core import GaugeMetricFamily
 import logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -34,7 +35,7 @@ class CinderServiceStats(OSBase):
 
         aggregated_workers = defaultdict(Counter)
 
-        stats = self.osclient.get_workers('cinder')
+        stats = self.osclient.get_workers('cinderv3')
         for worker in stats:
             service = worker['service']
             state = worker['state']
@@ -66,19 +67,26 @@ class CinderServiceStats(OSBase):
         registry = CollectorRegistry()
         labels = ['region', 'host', 'service', 'state']
         cinder_services_stats_cache = self.get_cache_data()
+        cinder_services_stats_cache.sort(key=self.take_stat_name)
+        REGISTRY_FLAG = ''
+        stat_gauge = []
+
         for cinder_services_stat in cinder_services_stats_cache:
-            stat_gauge = Gauge(
-                self.gauge_name_sanitize(
-                    cinder_services_stat['stat_name']),
-                'Openstack Cinder Service statistic',
-                labels,
-                registry=registry)
             label_values = [self.osclient.region,
                             cinder_services_stat.get('host', ''),
                             cinder_services_stat.get('service', ''),
                             cinder_services_stat.get('state', '')]
-            stat_gauge.labels(
-                *
-                label_values).set(
-                cinder_services_stat['stat_value'])
+            if REGISTRY_FLAG != cinder_services_stat['stat_name']:
+                if REGISTRY_FLAG:
+                    registry.register(OSCollector(stat_gauge))
+                stat_gauge = GaugeMetricFamily(
+                    self.gauge_name_sanitize(
+                        cinder_services_stat['stat_name']),
+                    'Openstack Cinder Service statistic',
+                    labels=labels)
+                REGISTRY_FLAG = cinder_services_stat['stat_name']
+
+            stat_gauge.add_metric(label_values,
+                                  cinder_services_stat['stat_value'])
+        registry.register(OSCollector(stat_gauge))
         return generate_latest(registry)

@@ -5,12 +5,10 @@ Image for a prometheus exporter for openstack API derived metrics.
 Compared to the upstream repo, this copy has fixed several critical bugs:
 
 * Port confiction with Collectd
-
 * Multi-registration of the same metric name
-
 * Wrong reference to the OpenStack enviroment variables
-
 * Do not support insecure mode for https queries
+* CiderV3 addaption to OpenStack Queen
 
 ## Environment
 
