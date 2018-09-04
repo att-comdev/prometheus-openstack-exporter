@@ -44,6 +44,7 @@ class OSClient(object):
             tenant_name,
             username,
             user_domain,
+            project_domain,
             region,
             timeout,
             retries):
@@ -52,6 +53,7 @@ class OSClient(object):
         self.tenant_name = tenant_name
         self.username = username
         self.user_domain = user_domain
+        self.project_domain = project_domain
         self.region = region
         self.timeout = timeout
         self.retries = retries
@@ -89,7 +91,7 @@ class OSClient(object):
                 "scope": {
                     "project": {
                         "name": self.tenant_name,
-                        "domain": {"name": self.user_domain}
+                        "domain": {"name": self.project_domain}
                     }
                 }
             }

@@ -106,6 +106,9 @@ if __name__ == '__main__':
     os_user_domain = config.get(
         'OS_USER_DOMAIN_NAME',
         os.getenv('OS_USER_DOMAIN_NAME'))
+    os_project_domain = config.get(
+        'OS_PROJECT_DOMAIN_NAME',
+        os.getenv('OS_PROJECT_DOMAIN_NAME'))
     os_region = config.get('OS_REGION_NAME', os.getenv('OS_REGION_NAME'))
     os_timeout = config.get(
         'TIMEOUT_SECONDS', int(
@@ -131,6 +134,7 @@ if __name__ == '__main__':
         os_tenant_name,
         os_username,
         os_user_domain,
+        os_project_domain,
         os_region,
         os_timeout,
         os_retries)
