@@ -63,6 +63,11 @@ class OSClient(object):
         self.session.mount(
             'https://', requests.adapters.HTTPAdapter(max_retries=retries))
         self._service_catalog = []
+        self.token_refresh_counter = 0;
+
+
+    def get_token_refresh_counter(self):
+        return self.token_refresh_counter
 
     def is_valid_token(self):
         now = datetime.datetime.now(tz=dateutil.tz.tzutc())
@@ -73,6 +78,7 @@ class OSClient(object):
         self.valid_until = None
 
     def get_token(self):
+        self.token_refresh_counter += 1;
         self.clear_token()
         data = json.dumps({
             "auth": {
@@ -102,6 +108,7 @@ class OSClient(object):
             logger.error(
                 "Cannot get a valid token from {}".format(
                     self.keystone_url))
+            return None
 
         if r.status_code < 200 or r.status_code > 299:
             logger.error(
@@ -249,6 +256,8 @@ class OSClient(object):
             msg = "{}: Got {} ({})".format(
                 msg, ost_services_r.status_code, ost_services_r.content)
             logger.warning(msg)
+            if ost_services_r.status_code == 401: # authorizaton problem -> token failed?
+                self.clear_token()
         else:
             try:
                 r_json = ost_services_r.json()

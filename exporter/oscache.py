@@ -39,7 +39,7 @@ class ThreadSafeDict(dict):
 
 class OSCache(Thread):
 
-    def __init__(self, refresh_interval, region):
+    def __init__(self, refresh_interval, region, osclient):
         Thread.__init__(self)
         self.daemon = True
         self.duration = 0
@@ -47,6 +47,7 @@ class OSCache(Thread):
         self.cache = ThreadSafeDict()
         self.region = region
         self.osclients = []
+        self.osclient = osclient
 
     def cache_me(self, osclient):
         self.osclients.append(osclient)
@@ -81,4 +82,8 @@ class OSCache(Thread):
                          'Cache refresh duration in seconds.',
                          labels, registry=registry)
         duration.labels(*label_values).set(self.duration)
+        tokenRefresh = Gauge('openstack_exporter_token_refresh_count',
+                         'Number of times the keystone token needed to be refreshed.',
+                         labels, registry=registry)
+        tokenRefresh.labels(*label_values).set(self.osclient.get_token_refresh_counter())
         return generate_latest(registry)
