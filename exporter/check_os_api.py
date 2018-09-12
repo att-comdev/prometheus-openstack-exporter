@@ -51,6 +51,11 @@ class CheckOSApi(OSBase):
         'contrail_config': {'path': '/', 'expect': [200], 'name': 'contrail-config-api'},
         'congress': {'path': '/', 'expect': [200], 'name': 'congress-api'},
         'placement': {'path': '/', 'expect': [401], 'name': 'placement-api'},
+        'shipyard': {'path': 'v1.0/health', 'expect': [204, 503], 'name': 'shipyard'},
+        'armada': {'path': 'v1.0/health', 'expect': [204, 503], 'name': 'armada'},
+        'deckhand': {'path': 'v1.0/health', 'expect': [204, 503], 'name': 'deckhand'},
+        'drydock': {'path': 'v1.0/health', 'expect': [204, 503], 'name': 'drydock'},
+        'promenade': {'path': 'v1.0/health', 'expect': [204, 503], 'name': 'promenade'},
     }
 
     def _service_url(self, endpoint, path):
