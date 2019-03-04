@@ -97,7 +97,7 @@ class HypervisorStats(OSBase):
             for agg in nova_aggregates.keys():
                 agg_hosts = nova_aggregates[agg]['hosts']
                 if host in agg_hosts:
-                    free = ((int(self.extra_config['cpu_ratio'] *
+                    free = ((int(self.cpu_overcommit_ratio *
                                  m_vcpus)) -
                             m_vcpus_used)
                     nova_aggregates[agg]['metrics']['free_vcpus'] += free
